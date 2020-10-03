@@ -18,8 +18,8 @@ class HilbertPalette(Palette):
 	def MakeNewPalette(self):
 		print("Collecting palette")
 		colours = {}
-		parent = Path(__file__).resolve().parents[1]
-		photos = parent / self.sourceDirectory
+		local = Path(__file__).resolve().parents[0]
+		photos = local / self.sourceDirectory
 		total = len(list(photos.iterdir()))
 		with tqdm(total=total) as pbar:
 			for photo in photos.iterdir():
