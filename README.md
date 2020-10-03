@@ -14,13 +14,13 @@ Running  `python3 ./Painter/paint.py -h` will provide a full list of options.
 ## Performance
 I’ve been making this on a laptop with an i7 and 8GB of RAM.
 
-For large libraries of images it is clearly more efficient to use Hilbert’s curve. To create an image with 344960 pixels from ~5000 images took 54 minutes using Hilbert’s curve but without only got to 9% completion after an hour. For small libraries of images there is not much difference when using Hilbert’s curve with both usually taking around 8 minutes to create a picture with 174592 pixels from 183 images.
+For large libraries of images it is clearly more efficient to use Hilbert’s curve. To create an image with 344960 pixels from ~5000 images took 54 minutes using Hilbert’s curve but without only got to 9% completion after an hour. For small libraries of images there is not much difference when using Hilbert’s curve, usually taking around 8 minutes to create a picture with 174592 pixels from 183 images.
 
-One of the largest bottlenecks is opening an image to fill put it onto the image being created. Currently I am using the PILLOW library for handling the images but it sounds like there are others that would be faster for my usage.
+One of the largest bottlenecks is opening an image to put it onto the image being created. Currently I am using the PILLOW library for handling images but it sounds like there are others that would be faster for my usage.
 
 ## Results
 With 180 images that are not very diverse in colour the results look odd. Shapes can be made out but a lot of close shades become the same giving an uncanny look.
-With 5000 images the result become much better. The noise from the colours within the pictures give a more painting like feel.
+With 5000 diverse images the result become much better. The noise from the colours within the pictures give a more painting like feel.
 To do: Add an examples folder. This will likely be screen grabs and not whole images because the increase in width and height leads to pictures that are about 1GB in size.
 
 Things to implement/fix:
