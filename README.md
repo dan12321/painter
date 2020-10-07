@@ -9,19 +9,6 @@ Palettes can be saved so you don’t have to create a new one each time.
 
 Colours don’t have to be mapped to Hilbert’s curve. The alternative goes through each image to find the one with the closest Euclidean distance instead. Not using Hilbert’s curve leads to slightly more accurate results but with a limited colour palette (tested with 180 photos) the results tend to look less creepy with inaccuracies and with large colour palettes (tested with 5000 photos) this method is unusably slow.
 
-Running  `python3 ./Painter/paint.py -h` will provide a full list of options.
-
-# Painter
-Replaces each pixel of a photo with a photo of as similar colour possible
-
-The paint.py script can be used to create a picture out of other pictures. This is a work in progress so I would recommend using duplicates of photos as a precaution.
-The script works by first creating a “palette” from a directory filled with images. The palette contains a dictionary of the pictures with their predominant colours. By default colours are mapped onto a Hilbert’s curve so that when searching the palette for a colour a binary search can be used. Then the program goes through the pixels of the image to recreate and adds the picture with the closest predominant colour to the corresponding place in the image being created.
-
-## Usage
-Palettes can be saved so you don’t have to create a new one each time.
-
-Colours don’t have to be mapped to Hilbert’s curve. The alternative goes through each image to find the one with the closest Euclidean distance instead. Not using Hilbert’s curve leads to slightly more accurate results but with a limited colour palette (tested with 180 photos) the results tend to look less creepy with inaccuracies and with large colour palettes (tested with 5000 photos) this method is unusably slow.
-
 Running `python3 ./Painter/paint.py -h` will provide a full list of options.
 
 ## Performance
