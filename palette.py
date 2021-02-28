@@ -3,6 +3,7 @@ from __future__ import print_function
 from pathlib import Path
 
 import numpy as np
+import helpermethods as hm
 import scipy
 import scipy.cluster as cluster
 
@@ -16,14 +17,16 @@ class Palette:
 		self.colKeys = []
 
 	def FindRegionColour(self, region, resizeRatio = 1, numClusters = 5):
-		reWidth, reHieght = region.size
-		region = region.resize((int(reWidth*resizeRatio), int(reHieght*resizeRatio)))
-		ar = np.asarray(region)
-		shape = ar.shape
-		ar = ar.reshape(scipy.product(shape[:2]), shape[2]).astype(float)
+		reWidth = region.columns()
+		reHieght = region.rows()
+		sampleWidth = int(reWidth*resizeRatio)
+		sampleHieght = int(reHieght*resizeRatio)
+		region.scale(str(sampleWidth) + 'X' + str(sampleHieght))
+		pxls = region.getPixels(0, 0, sampleWidth, sampleHieght)
+		rgbPxls = hm.pixelsToRgbs(pxls)
 
-		codes, dist = cluster.vq.kmeans(ar, numClusters)
-		vecs, dist = cluster.vq.vq(ar, codes)
+		codes, dist = cluster.vq.kmeans(rgbPxls, numClusters)
+		vecs, dist = cluster.vq.vq(rgbPxls, codes)
 		counts, bins = scipy.histogram(vecs, len(codes))
 
 		index_max = scipy.argmax(counts)

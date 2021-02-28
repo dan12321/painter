@@ -21,7 +21,7 @@ def main():
     else:
         from euclidpalette import EuclidPalette as Palette
     from painter import Painter
-    from PIL import Image
+    from pgmagick import Image, Blob
 
     palette = None
     profile = cProfile.Profile()
@@ -44,19 +44,18 @@ def main():
         palette.SavePalette()
     print("Palette to hand")
 
-    image = Image.open(args.picture[0])
-    print(f"Reference picture {args.picture[0]} open")
-    painter = Painter(palette)
-    print(f"Painting {args.output[0]}")
-    profile.enable()
-    painter.PaintPixels(image, args.pixelsize[0], args.output[0])
-    profile.disable()
-    if (args.stats):
-        ps = pstats.Stats(profile)
-        ps.sort_stats('cumtime', 'calls')
-        ps.print_stats()
-
-    image.close()
+    with open(args.picture[0], 'rb') as file:
+        image = Image(Blob(file.read()))
+        print(f"Reference picture {args.picture[0]} open")
+        painter = Painter(palette)
+        print(f"Painting {args.output[0]}")
+        profile.enable()
+        painter.PaintPixels(image, args.pixelsize[0], args.output[0])
+        profile.disable()
+        if (args.stats):
+            ps = pstats.Stats(profile)
+            ps.sort_stats('cumtime', 'calls')
+            ps.print_stats()
 
 if __name__ == "__main__":
     main()

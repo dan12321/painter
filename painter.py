@@ -3,7 +3,8 @@ from __future__ import print_function
 from pathlib import Path
 
 import strict
-from PIL import Image
+import helpermethods as hm
+from pgmagick import Blob, Geometry, Image, CompositeOperator as co
 from tqdm import tqdm
 
 
@@ -13,27 +14,25 @@ class Painter:
 
 	def MakePixel(self, width, height, RGB):
 		pixelPath = self.palette.FindMatchingImage(RGB)
-		pixel = Image.open(pixelPath)
-		pixel = pixel.resize((width, height))
-		return pixel
+		with open(pixelPath, 'rb') as file:
+			pixel = Image(Blob(file.read()), Geometry(width, height))
+			return pixel
 
 	def PaintPixels(self, image, pixelSize, output):
-		pxl = image.load()
-		width, height = image.size
+		width = image.columns()
+		height = image.rows()
+		pxls = image.getPixels(0, 0, width, height)
 		print("Generating canvas...")
-		newImage = Image.new('RGB', (width * pixelSize, height * pixelSize), (0,0,0,0))
+		newImage = Image(Geometry(width * pixelSize, height * pixelSize), 'transparent')
 		print("Blank canvas made")
 		print("Painting pixels")
 		with tqdm(total=width*height) as pbar:
 			for i in range(width):
 				for j in range(height):
-					rgb = pxl[i, j]
+					rgb = hm.pixelToRgb(pxls[width * j + i])
 					block = self.MakePixel(pixelSize, pixelSize, rgb)
-					box = (i*pixelSize, j*pixelSize, (i+1)*pixelSize, (j+1)*pixelSize)
-					newImage.paste(block, box)
-					block.close()
+					newImage.composite(block, i*pixelSize, j*pixelSize, co.OverCompositeOp)
 					pbar.update(1)
 		print(f"Saving {output}...")
-		newImage.save(output)
+		newImage.write(output)
 		print("Image Saved")
-		newImage.close()

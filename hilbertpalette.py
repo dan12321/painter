@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 from hilbertcurve.hilbertcurve import HilbertCurve
-from PIL import Image
+from pgmagick import Image, Blob
 from tqdm import tqdm
 
 from palette import Palette
@@ -23,14 +23,15 @@ class HilbertPalette(Palette):
 		total = len(list(photos.iterdir()))
 		with tqdm(total=total) as pbar:
 			for photo in photos.iterdir():
-				image = Image.open(photo)
-				try:
-					colour = self.FindRegionColour(image)
-					dist = self.hilbert_curve.distance_from_coordinates(np.rint(colour[:3]).astype(int).tolist())
-					colours[str(photo)] = dist
-				except IndexError as e:
-					print(f"Error processing {photo}: {e}")
-				pbar.update(1)
+				with open(photo, 'rb') as file:
+					image = Image(Blob(file.read()))
+					try:
+						colour = self.FindRegionColour(image)
+						dist = self.hilbert_curve.distance_from_point(np.rint(colour[:3]).astype(int).tolist())
+						colours[str(photo)] = dist
+					except IndexError as e:
+						print(f"Error processing {photo}: {e}")
+					pbar.update(1)
 		print("Sorting")
 		colours = {k: v for k, v in tqdm(sorted(colours.items(), key=lambda item: item[1]))}
 		self.colours = colours
@@ -73,6 +74,6 @@ class HilbertPalette(Palette):
 		return mid
 
 	def FindMatchingImage(self, RGB):
-		rgbDist = self.hilbert_curve.distance_from_coordinates(list(RGB[:3]))
+		rgbDist = self.hilbert_curve.distance_from_point(list(RGB[:3]))
 		matchIndex = self.FindClosestIndex(self.colValues, len(self.colValues), rgbDist)
 		return self.colKeys[matchIndex]
